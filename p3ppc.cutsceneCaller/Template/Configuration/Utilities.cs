@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace p3ppc.cutsceneCaller.Template.Configuration
+namespace p3ppc.movieCaller.Template.Configuration
 {
     public class Utilities
     {

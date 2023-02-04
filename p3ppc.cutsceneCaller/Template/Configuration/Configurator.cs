@@ -1,7 +1,7 @@
-﻿using p3ppc.cutsceneCaller.Configuration;
+﻿using p3ppc.movieCaller.Configuration;
 using Reloaded.Mod.Interfaces;
 
-namespace p3ppc.cutsceneCaller.Template.Configuration
+namespace p3ppc.movieCaller.Template.Configuration
 {
     public class Configurator : IConfiguratorV3
     {

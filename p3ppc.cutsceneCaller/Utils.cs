@@ -1,4 +1,4 @@
-﻿using p3ppc.cutsceneCaller.Configuration;
+﻿using p3ppc.movieCaller.Configuration;
 using Reloaded.Mod.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace p3ppc.cutsceneCaller
+namespace p3ppc.movieCaller
 {
     internal class Utils
     {
@@ -26,22 +26,22 @@ namespace p3ppc.cutsceneCaller
         internal static void LogDebug(string message)
         {
             if (_config.DebugEnabled)
-                _logger.WriteLine($"[Cutscene Caller] {message}");
+                _logger.WriteLine($"[movie Caller] {message}");
         }
 
         internal static void Log(string message)
         {
-            _logger.WriteLine($"[Cutscene Caller] {message}");
+            _logger.WriteLine($"[movie Caller] {message}");
         }
 
         internal static void LogError(string message, Exception e)
         {
-            _logger.WriteLine($"[Cutscene Caller] {message}: {e.Message}", System.Drawing.Color.Red);
+            _logger.WriteLine($"[movie Caller] {message}: {e.Message}", System.Drawing.Color.Red);
         }
 
         internal static void LogError(string message)
         {
-            _logger.WriteLine($"[Cutscene Caller] {message}", System.Drawing.Color.Red);
+            _logger.WriteLine($"[movie Caller] {message}", System.Drawing.Color.Red);
         }
 
         // Pushes the value of an xmm register to the stack, saving it so it can be restored with PopXmm

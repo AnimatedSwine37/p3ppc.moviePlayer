@@ -1,6 +1,6 @@
-﻿using p3ppc.cutsceneCaller.Configuration;
+﻿using p3ppc.movieCaller.Configuration;
 
-namespace p3ppc.cutsceneCaller.Template
+namespace p3ppc.movieCaller.Template
 {
     /// <summary>
     /// Base class for implementing mod functionality.

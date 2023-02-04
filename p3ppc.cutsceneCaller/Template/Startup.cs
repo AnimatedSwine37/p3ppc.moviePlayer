@@ -3,13 +3,13 @@
  * to make it easier to upgrade to newer versions of the template.
 */
 
-using p3ppc.cutsceneCaller.Configuration;
-using p3ppc.cutsceneCaller.Template.Configuration;
+using p3ppc.movieCaller.Configuration;
+using p3ppc.movieCaller.Template.Configuration;
 using Reloaded.Hooks.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 using Reloaded.Mod.Interfaces.Internal;
 
-namespace p3ppc.cutsceneCaller.Template
+namespace p3ppc.movieCaller.Template
 {
     public class Startup : IMod
     {

@@ -1,12 +1,12 @@
-﻿using p3ppc.cutsceneCaller.Configuration;
-using p3ppc.cutsceneCaller.Template;
+﻿using p3ppc.movieCaller.Configuration;
+using p3ppc.movieCaller.Template;
 using Reloaded.Hooks.ReloadedII.Interfaces;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace p3ppc.cutsceneCaller
+namespace p3ppc.movieCaller
 {
     /// <summary>
     /// Your mod logic goes here.

@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IReloadedHooks = Reloaded.Hooks.ReloadedII.Interfaces.IReloadedHooks;
 
-namespace p3ppc.cutsceneCaller
+namespace p3ppc.movieCaller
 {
     public static unsafe class MovieCaller
     {
@@ -36,7 +36,7 @@ namespace p3ppc.cutsceneCaller
             {
                 if (!result.Found)
                 {
-                    Console.WriteLine("Unable to find input2, you won't be able to skip cutscenes.");
+                    Console.WriteLine("Unable to find input2, you won't be able to skip movies.");
                     return;
                 }
                 Utils.LogDebug($"Found input2 pointer at 0x{result.Offset + Utils.BaseAddress:X}");
@@ -50,7 +50,7 @@ namespace p3ppc.cutsceneCaller
             {
                 if (!result.Found)
                 {
-                    Console.WriteLine("Unable to find StopMovie, you won't be able to skip cutscenes.");
+                    Console.WriteLine("Unable to find StopMovie, you won't be able to skip movies.");
                     return;
                 }
                 Utils.LogDebug($"Found StopMovie call at 0x{result.Offset + Utils.BaseAddress:X}");
@@ -64,7 +64,7 @@ namespace p3ppc.cutsceneCaller
             {
                 if (!result.Found)
                 {
-                    Utils.LogError("Unable to find IsMoviePlaying, won't actually be able to call cutscenes.");
+                    Utils.LogError("Unable to find IsMoviePlaying, won't actually be able to call movies.");
                     return;
                 }
                 Utils.LogDebug($"Found IsMoviePlaying at 0x{result.Offset + Utils.BaseAddress:X}");
@@ -76,7 +76,7 @@ namespace p3ppc.cutsceneCaller
             {
                 if (!result.Found)
                 {
-                    Utils.LogError("Unable to find  movie things, won't actually be able to call cutscenes.");
+                    Utils.LogError("Unable to find  movie things, won't actually be able to call movies.");
                     return;
                 }
                 Utils.LogDebug($"Found movie things at 0x{result.Offset + Utils.BaseAddress:X}");
@@ -91,7 +91,7 @@ namespace p3ppc.cutsceneCaller
             {
                 if (!result.Found)
                 {
-                    Utils.LogError($"Unable to find CallMovie, won't actually be able to call cutscenes.");
+                    Utils.LogError($"Unable to find CallMovie, won't actually be able to call movies.");
                     return;
                 }
                 Utils.LogDebug($"Found CallMovie at 0x{result.Offset + Utils.BaseAddress:X}");
@@ -104,34 +104,34 @@ namespace p3ppc.cutsceneCaller
         private static void SetupFlowFunc(IReloadedHooks hooks)
         {
             var unusedFunc = FlowUtils.GetFlowFunction(0, 4);
-            Utils.LogDebug($"CUSTOM_CALL_CUTSCENE info is at 0x{(nuint)unusedFunc:X}");
-            unusedFunc->Function = hooks.Utilities.GetFunctionPointer(typeof(MovieCaller), "CallCutsceneFlowFunc");
+            Utils.LogDebug($"CUSTOM_CALL_movie info is at 0x{(nuint)unusedFunc:X}");
+            unusedFunc->Function = hooks.Utilities.GetFunctionPointer(typeof(MovieCaller), "CallMovieFlowFunc");
             unusedFunc->NumArgs = 1;
         }
 
         private static int count = 0;
         [UnmanagedCallersOnly]
-        public static int CallCutsceneFlowFunc()
+        public static int CallMovieFlowFunc()
         {
             if (_isMoviePlaying == null) return 1;
             
             if (!_movieIsPlaying)
             {
                 _movieIsPlaying = true;
-                StartCutscene();
+                Startmovie();
                 return 0;
             }
 
             if (!_isMoviePlaying(_introStruct.StateInfo->OperationInfo))
             {
-                Utils.LogDebug($"Done playing cutscene");
+                Utils.LogDebug($"Done playing movie");
                 _movieIsPlaying = false;
                 return 1;
             }
 
             if ((*_input & Input.Start) != 0)
             {
-                Utils.LogDebug($"Skipping cutscene");
+                Utils.LogDebug($"Skipping movie");
                 _stopMovie();
                 _movieIsPlaying = false;
                 return 1;
@@ -140,11 +140,11 @@ namespace p3ppc.cutsceneCaller
             return 0;
         }
 
-        private static void StartCutscene()
+        private static void Startmovie()
         {
-            int cutscenedId = FlowUtils.GetFlowInput(0);
+            int moviedId = FlowUtils.GetFlowInput(0);
 
-            string usmPath = $"sound/usm/{cutscenedId}.usm";
+            string usmPath = $"sound/usm/{moviedId}.usm";
             Utils.LogDebug($"Playing {usmPath}");
             var operationInfo = _playMovie(_introStruct, usmPath, _movieThing1, 0, 0, *_movieThing2);
             Utils.LogDebug($"Operation info is at 0x{(nuint)operationInfo:X}");

@@ -1,7 +1,7 @@
-﻿using p3ppc.cutsceneCaller.Template.Configuration;
+﻿using p3ppc.movieCaller.Template.Configuration;
 using System.ComponentModel;
 
-namespace p3ppc.cutsceneCaller.Configuration
+namespace p3ppc.movieCaller.Configuration
 {
     public class Config : Configurable<Config>
     {

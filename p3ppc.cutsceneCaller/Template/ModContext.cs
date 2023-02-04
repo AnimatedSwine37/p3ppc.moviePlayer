@@ -1,8 +1,8 @@
-﻿using p3ppc.cutsceneCaller.Configuration;
+﻿using p3ppc.movieCaller.Configuration;
 using Reloaded.Mod.Interfaces;
 using IReloadedHooks = Reloaded.Hooks.ReloadedII.Interfaces.IReloadedHooks;
 
-namespace p3ppc.cutsceneCaller.Template
+namespace p3ppc.movieCaller.Template
 {
     /// <summary>
     /// Represents information passed in from the mod loader template to the implementing mod.
