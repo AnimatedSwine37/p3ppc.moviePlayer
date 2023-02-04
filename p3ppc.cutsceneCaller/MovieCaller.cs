@@ -27,7 +27,6 @@ namespace p3ppc.cutsceneCaller
 
         internal static void Initialise(IStartupScanner startupScanner, IReloadedHooks hooks)
         {
-            Debugger.Launch();
             var stateInfoAddr = Memory.CurrentProcess.Allocate(sizeof(IntroStateStruct));
             _introStruct.StateInfo = (IntroStateStruct*)stateInfoAddr;
             *_introStruct.StateInfo = new IntroStateStruct();
@@ -124,7 +123,10 @@ namespace p3ppc.cutsceneCaller
             string usmPath = $"sound/usm/{cutscenedId}.usm";
             Utils.LogDebug($"Playing {usmPath}");
             var operationInfo = _playMovie(_introStruct, usmPath, _movieThing1, 0, 0, *_movieThing2);
-            Utils.LogDebug($"Operation info is at 0x{operationInfo:X}");
+            Utils.LogDebug($"Operation info is at 0x{(nuint)operationInfo:X}");
+            // I don't really know what these are but if they aren't 0 the game will crash. I think they are meant to point to something but 0 works so I'll just go with that
+            operationInfo->PointerThing1 = 0;
+            operationInfo->PointerThing2 = 0; 
             _introStruct.StateInfo->OperationInfo = operationInfo;
         }
 
@@ -143,16 +145,26 @@ namespace p3ppc.cutsceneCaller
             internal int State;
 
             [FieldOffset(16)]
-            internal nuint OperationInfo;
+            internal TaskStruct* OperationInfo;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct TaskStruct
+        {
+            [FieldOffset(0x68)]
+            internal nuint PointerThing1;
+
+            [FieldOffset(0x78)]
+            internal nuint PointerThing2;
         }
 
         [Function(CallingConventions.Microsoft)]
         private delegate void StopMovieDelegate();
 
         [Function(CallingConventions.Microsoft)]
-        private delegate nuint PlayMovieDelegate(IntroStruct introStruct, string moviePath, nuint movieThing1, int param4, int param5, nuint movieThing2);
+        private delegate TaskStruct* PlayMovieDelegate(IntroStruct introStruct, string moviePath, nuint movieThing1, int param4, int param5, nuint movieThing2);
 
         [Function(CallingConventions.Microsoft)]
-        private delegate bool IsMoviePlayingDelegate(nuint movieInfo);
+        private delegate bool IsMoviePlayingDelegate(TaskStruct* movieInfo);
     }
 }
