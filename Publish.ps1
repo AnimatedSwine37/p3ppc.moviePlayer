@@ -162,8 +162,8 @@ param (
     $UseScriptDirectory=$True,
 
     ## => User Config <= ## 
-    $ProjectPath = "p3ppc.cutsceneCaller.csproj",
-    $PackageName = "p3ppc.cutsceneCaller",
+    $ProjectPath = "p3ppc.moviePlayer/p3ppc.moviePlayer.csproj",
+    $PackageName = "p3ppc.moviePlayer",
     $PublishOutputDir = "Publish/ToUpload",
 
     ## => User: Delta Config
@@ -180,7 +180,7 @@ param (
 
     $GameBananaItemId = 333681, # From mod page URL.
 
-    $NuGetPackageId = "p3ppc.cutsceneCaller",
+    $NuGetPackageId = "p3ppc.moviePlayer",
     $NuGetFeedUrl = "http://packages.sewer56.moe:5000/v3/index.json",
     $NuGetAllowUnlisted = $False,
 
