@@ -22,7 +22,8 @@ namespace p3ppc.cutsceneCaller
         private static IntroStruct _introStruct = new();
         private static nuint _movieThing1;
         private static nuint* _movieThing2;
-
+        private static Input* _input;
+        
         private static bool _movieIsPlaying = false;
 
         internal static void Initialise(IStartupScanner startupScanner, IReloadedHooks hooks)
@@ -30,6 +31,20 @@ namespace p3ppc.cutsceneCaller
             var stateInfoAddr = Memory.CurrentProcess.Allocate(sizeof(IntroStateStruct));
             _introStruct.StateInfo = (IntroStateStruct*)stateInfoAddr;
             *_introStruct.StateInfo = new IntroStateStruct();
+
+            startupScanner.AddMainModuleScan("F7 05 ?? ?? ?? ?? 00 60 00 00 75 ??", result =>
+            {
+                if (!result.Found)
+                {
+                    Console.WriteLine("Unable to find input2, you won't be able to skip cutscenes.");
+                    return;
+                }
+                Utils.LogDebug($"Found input2 pointer at 0x{result.Offset + Utils.BaseAddress:X}");
+
+                _input = (Input*)(Utils.GetGlobalAddress(result.Offset + Utils.BaseAddress + 2) + 4);
+                Utils.LogDebug($"Input2 is at 0x{(nuint)_input:X}");
+            });
+
 
             startupScanner.AddMainModuleScan("E8 ?? ?? ?? ?? 48 8B 4B ?? E8 ?? ?? ?? ?? 83 F8 01 0F 84 ?? ?? ?? ?? C7 03 06 00 00 00", result =>
             {
@@ -113,6 +128,15 @@ namespace p3ppc.cutsceneCaller
                 _movieIsPlaying = false;
                 return 1;
             }
+
+            if ((*_input & Input.Start) != 0)
+            {
+                Utils.LogDebug($"Skipping cutscene");
+                _stopMovie();
+                _movieIsPlaying = false;
+                return 1;
+            }
+
             return 0;
         }
 
@@ -166,5 +190,21 @@ namespace p3ppc.cutsceneCaller
 
         [Function(CallingConventions.Microsoft)]
         private delegate bool IsMoviePlayingDelegate(TaskStruct* movieInfo);
+
+        private enum Input : ushort
+        {
+            Start = 8,
+            Up = 16,
+            Right = 32,
+            Down = 64,
+            Left = 128,
+            RotateLeft = 1280,
+            RotateRight = 2560,
+            CommandMenu = 4096,
+            Confirm = 8192,
+            Escape = 16384,
+            SubMenu = 32768,
+        }
+
     }
 }
