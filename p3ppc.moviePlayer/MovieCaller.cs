@@ -1,4 +1,5 @@
 ﻿using Reloaded.Hooks.Definitions;
+using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Hooks.Definitions.X64;
 using Reloaded.Hooks.ReloadedII.Interfaces;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
@@ -23,6 +24,9 @@ namespace p3ppc.movieCaller
         private static nuint _movieThing1;
         private static nuint* _movieThing2;
         private static Input* _input;
+        private static IHook<OpenBacklogDelegate> _openBacklogHook;
+        private static IAsmHook _closeBacklogHook;
+        private static IReverseWrapper<MovieIsPlayingDelegate> _movieIsPlayingReverseWrapper;
         
         private static bool _movieIsPlaying = false;
 
@@ -99,6 +103,49 @@ namespace p3ppc.movieCaller
                 _playMovie = hooks.CreateWrapper<PlayMovieDelegate>(result.Offset + Utils.BaseAddress, out _);
                 SetupFlowFunc(hooks);
             });
+
+            startupScanner.AddMainModuleScan("48 83 EC 28 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 85 C0 75 ?? 31 C9", result =>
+            {
+                if (!result.Found)
+                {
+                    Utils.LogError($"Unable to find OpenBacklog, the backlog can be opened during movies.");
+                    return;
+                }
+                Utils.LogDebug($"Found OpenBacklog at 0x{result.Offset + Utils.BaseAddress:X}");
+
+                _openBacklogHook = hooks.CreateHook<OpenBacklogDelegate>(OpenBacklog, Utils.BaseAddress + result.Offset).Activate();
+            });
+
+            startupScanner.AddMainModuleScan("A8 08 75 ?? 0F BA E0 0E", result =>
+            {
+                if (!result.Found)
+                {
+                    Utils.LogError($"Unable to find CloseBacklog, the backlog won't be closed automatically if a movie starts.");
+                    return;
+                }
+                Utils.LogDebug($"Found CloseBacklog at 0x{result.Offset + Utils.BaseAddress:X}");
+
+                string[] function =
+                {
+                    "use64",
+                    "push rax",
+                    "push rcx\npush rdx\npush r8\npush r9\npush r10\npush r11",
+                    "sub rsp, 40",
+                    $"{hooks.Utilities.GetAbsoluteCallMnemonics(MovieIsPlaying, out _movieIsPlayingReverseWrapper)}",
+                    "add rsp, 40",
+                    "pop r11\npop r10\npop r9\npop r8\npop rdx\npop rcx",
+                    "cmp eax, 1",
+                    "jne normal",
+                    "pop rax",
+                    "mov al, 8",
+                    "jmp endHook",
+                    "label normal",
+                    "pop rax",
+                    "label endHook"
+                };
+
+                _closeBacklogHook = hooks.CreateAsmHook(function, result.Offset + Utils.BaseAddress, AsmHookBehaviour.ExecuteFirst).Activate();
+            });
         }
 
         private static void SetupFlowFunc(IReloadedHooks hooks)
@@ -154,6 +201,18 @@ namespace p3ppc.movieCaller
             _introStruct.StateInfo->OperationInfo = operationInfo;
         }
 
+        private static void OpenBacklog()
+        {
+            // If a movie is playing just do nothing
+            if (!_movieIsPlaying)
+                _openBacklogHook.OriginalFunction();
+        }
+
+        private static bool MovieIsPlaying()
+        {
+            return _movieIsPlaying;
+        }
+
 
         [StructLayout(LayoutKind.Explicit)]
         private struct IntroStruct
@@ -182,6 +241,8 @@ namespace p3ppc.movieCaller
             internal nuint PointerThing2;
         }
 
+        private delegate bool MovieIsPlayingDelegate();
+
         [Function(CallingConventions.Microsoft)]
         private delegate void StopMovieDelegate();
 
@@ -190,6 +251,9 @@ namespace p3ppc.movieCaller
 
         [Function(CallingConventions.Microsoft)]
         private delegate bool IsMoviePlayingDelegate(TaskStruct* movieInfo);
+
+        [Function(CallingConventions.Microsoft)]
+        private delegate void OpenBacklogDelegate();
 
         private enum Input : ushort
         {
