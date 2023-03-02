@@ -3,22 +3,62 @@
   "ModName": "Movie Player",
   "ModAuthor": "AnimatedSwine37",
   "ModVersion": "1.0.0",
-  "ModDescription": "Allows you to play movie videos using flowscript",
+  "ModDescription": "Allows you to play movies using flowscript",
   "ModDll": "p3ppc.moviePlayer.dll",
   "ModIcon": "Preview.png",
   "ModR2RManagedDll32": "x86/p3ppc.moviePlayer.dll",
   "ModR2RManagedDll64": "x64/p3ppc.moviePlayer.dll",
   "ModNativeDll32": "",
   "ModNativeDll64": "",
+  "Tags": [],
+  "CanUnload": false,
+  "HasExports": false,
   "IsLibrary": true,
   "ReleaseMetadataFileName": "p3ppc.moviePlayer.ReleaseMetadata.json",
-  "PluginData": {},
+  "PluginData": {
+    "GitHubDependencies": {
+      "IdToConfigMap": {
+        "reloaded.sharedlib.hooks": {
+          "Config": {
+            "UserName": "Sewer56",
+            "RepositoryName": "Reloaded.SharedLib.Hooks.ReloadedII",
+            "UseReleaseTag": true,
+            "AssetFileName": "reloaded.sharedlib.hooks.zip"
+          },
+          "ReleaseMetadataName": "Sewer56.Update.ReleaseMetadata.json"
+        },
+        "Reloaded.Memory.SigScan.ReloadedII": {
+          "Config": {
+            "UserName": "Reloaded-Project",
+            "RepositoryName": "Reloaded.Memory.SigScan",
+            "UseReleaseTag": false,
+            "AssetFileName": "Mod.zip"
+          },
+          "ReleaseMetadataName": "Reloaded.Memory.SigScan.ReloadedII.ReleaseMetadata.json"
+        }
+      }
+    },
+    "NuGet": {
+      "AllowUpdateFromAnyRepository": false,
+      "DefaultRepositoryUrls": [
+        "http://packages.sewer56.moe:5000/v3/index.json"
+      ]
+    },
+    "GitHubRelease": {
+      "UserName": "AnimatedSwine37",
+      "RepositoryName": "p3ppc.moviePlayer",
+      "UseReleaseTag": true,
+      "AssetFileName": "Mod.zip"
+    }
+  },
   "IsUniversalMod": false,
   "ModDependencies": [
-    "reloaded.sharedlib.hooks",
-    "Reloaded.Memory.SigScan.ReloadedII"
+    "Reloaded.Memory.SigScan.ReloadedII",
+    "reloaded.sharedlib.hooks"
   ],
   "OptionalDependencies": [],
-  "SupportedAppId": ["p3p.exe"],
-  "ProjectUrl": ""
+  "SupportedAppId": [
+    "p3p.exe"
+  ],
+  "ProjectUrl": "https://github.com/AnimatedSwine37/p3ppc.moviePlayer"
 }
